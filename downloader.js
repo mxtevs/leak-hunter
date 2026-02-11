@@ -10,9 +10,9 @@ dotenv.config();
 // --- CONFIGURAÇÕES DE PERFORMANCE E MONITORAMENTO ---
 const db = new Database('downloads.db');
 const downloadFolder = "./downloads_concluidos";
-const MIN_SPEED_KBS = 150;      // Velocidade mínima (KB/s) antes de encerrar
+const MIN_SPEED_KBS = 600;      // Novo limite: Interrompe se chegar a 600 KB/s
 const SPEED_CHECK_SEC = 5;      // Intervalo de verificação da velocidade
-const WORKERS = 2;              // Padrão de segurança para evitar blocks rápidos
+const WORKERS = 2;              // Padrão de segurança
 
 if (!fs.existsSync(downloadFolder)) {
     fs.mkdirSync(downloadFolder, { recursive: true });
@@ -79,10 +79,10 @@ async function main() {
                             process.stdout.write(`\r   -> Velocidade: ${velocidadeAtual} KB/s | ${percent}% `);
 
                             // INTERRUPÇÃO POR LENTIDÃO:
-                            // Verifica apenas após baixar pelo menos 500KB para evitar oscilações do início
-                            if (velocidadeAtual < MIN_SPEED_KBS && downloaded > 1024 * 500) { 
-                                console.error(`\n\n🛑 INTERRUPÇÃO: Velocidade insuficiente (${velocidadeAtual} KB/s).`);
-                                console.log("Log: A conta atingiu o limite de tráfego prioritário e está lenta.");
+                            // Verifica se a velocidade atingiu o patamar de 600 KB/s ou menos
+                            if (velocidadeAtual <= MIN_SPEED_KBS && downloaded > 1024 * 500) { 
+                                console.error(`\n\n🛑 INTERRUPÇÃO: Velocidade atingiu o limite crítico (${velocidadeAtual} KB/s).`);
+                                console.log(`Log: Encerrando execução para preservar a conta e evitar download lento.`);
                                 process.exit(0); 
                             }
 
