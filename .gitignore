@@ -1,0 +1,15 @@
+# Dependências
+node_modules/
+
+# Credenciais e Sessão (SENSÍVEL)
+.env
+session.txt
+
+# Banco de dados local
+*.db
+
+# Arquivos baixados
+downloads_concluidos/
+
+# Logs de erro do npm
+npm-debug.log*
