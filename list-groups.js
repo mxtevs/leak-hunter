@@ -4,13 +4,13 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Configurações das variáveis de ambiente
+// Configurações via .env
 const apiId = Number(process.env.TELEGRAM_API_ID);
 const apiHash = process.env.TELEGRAM_API_HASH;
 const stringSession = new StringSession(process.env.TG_SESSION_1);
 
 (async () => {
-    console.log("🔍 Conectando ao Telegram...");
+    console.log("[#] Conectando ao Telegram...");
     
     const client = new TelegramClient(stringSession, apiId, apiHash, {
         connectionRetries: 5,
@@ -18,21 +18,21 @@ const stringSession = new StringSession(process.env.TG_SESSION_1);
 
     try {
         await client.connect();
-        console.log("✅ Conectado com sucesso!\n");
+        console.log("[+] Conectado com sucesso!\n");
 
         console.log(`${"NOME DO GRUPO".padEnd(35)} | ${"ID DO GRUPO"}`);
         console.log("-".repeat(60));
 
-        // Buscamos todos os diálogos (chats, grupos, canais)
+        // Pega todos os diálogos da conta
         const dialogs = await client.getDialogs({});
 
         for (const dialog of dialogs) {
             const entity = dialog.entity;
 
-            // 1. Verifica se é um Grupo Comum (Chat)
+            // Identifica se é grupo simples
             const isGroup = entity instanceof Api.Chat;
             
-            // 2. Verifica se é um Supergrupo (Channel com a flag megagroup ativa)
+            // Identifica se é supergrupo
             const isSupergroup = entity instanceof Api.Channel && entity.megagroup;
 
             if (isGroup || isSupergroup) {
@@ -41,10 +41,10 @@ const stringSession = new StringSession(process.env.TG_SESSION_1);
                 let formattedId = "";
 
                 if (isSupergroup) {
-                    // Supergrupos no formato Bot API precisam do prefixo -100
+                    // Ajusta o prefixo para o padrão de supergrupos
                     formattedId = rawId.startsWith("-100") ? rawId : `-100${rawId}`;
                 } else {
-                    // Grupos comuns precisam apenas do sinal de menos
+                    // Ajusta o prefixo para grupos normais
                     formattedId = rawId.startsWith("-") ? rawId : `-${rawId}`;
                 }
 
@@ -53,9 +53,9 @@ const stringSession = new StringSession(process.env.TG_SESSION_1);
         }
 
     } catch (error) {
-        console.error("❌ Erro ao listar grupos:", error.message);
+        console.error("[!] Erro ao listar grupos:", error.message);
     } finally {
         await client.disconnect();
-        console.log("\n✅ Processo finalizado.");
+        console.log("\n[+] Processo finalizado.");
     }
 })();

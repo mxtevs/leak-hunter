@@ -8,7 +8,7 @@ dotenv.config();
 // --- CONFIGURAÇÕES DO BANCO DE DADOS ---
 const db = new Database('downloads.db');
 
-// Criamos a tabela garantindo a presença da coluna dc_id
+// Cria a tabela garantindo a coluna dc_id para organizar os downloads
 db.exec(`
     CREATE TABLE IF NOT EXISTS arquivos (
         id_mensagem INTEGER,
@@ -45,9 +45,9 @@ async function main() {
 
     try {
         await client.connect();
-        console.log("✅ Conectado com sucesso!");
+        console.log("[+] Conectado com sucesso!");
 
-        // Resolve a entidade (grupo/supergrupo)
+        // Localiza o grupo ou canal informado
         const entidade = await client.getEntity(grupoAlvo);
         
         // --- FORMATAÇÃO DO ID DO GRUPO ---
@@ -56,27 +56,27 @@ async function main() {
             ? (rawId.startsWith("-100") ? rawId : `-100${rawId}`)
             : (rawId.startsWith("-") ? rawId : `-${rawId}`);
 
-        console.log(`\n🔍 Varrendo: ${entidade.title || 'Grupo'} [ID: ${chatId}]`);
+        console.log(`\n[#] Varrendo: ${entidade.title || 'Grupo'} [ID: ${chatId}]`);
         console.log("--------------------------------------------------");
 
         let encontrados = 0;
         let novos = 0;
 
-        // iterMessages busca as mensagens com filtro de documento e termo ".txt"
+        // Busca mensagens que contenham documentos e o termo ".txt"
         for await (const message of client.iterMessages(entidade, {
             search: ".txt",
             filter: new Api.InputMessagesFilterDocument(),
         })) {
             
             if (message.document) {
-                // Busca o nome real do arquivo nos atributos
+                // Extrai o nome real do arquivo nos metadados
                 const attr = message.document.attributes.find(a => a instanceof Api.DocumentAttributeFilename);
                 const nomeOriginal = attr ? attr.fileName : "arquivo_desconhecido.txt";
 
                 if (nomeOriginal.toLowerCase().endsWith(".txt")) {
                     encontrados++;
                     
-                    const dcId = message.document.dcId; // Onde o arquivo está fisicamente
+                    const dcId = message.document.dcId; // ID do servidor de arquivos do Telegram
                     const tamanho = Number(message.document.size);
 
                     const resultado = salvarNoBanco.run(
@@ -88,23 +88,24 @@ async function main() {
                         'pendente'
                     );
 
+                    // Conta apenas se o arquivo for novo no banco
                     if (resultado.changes > 0) {
                         novos++;
                     }
 
                     if (encontrados % 50 === 0) {
-                        console.log(`[LOG] Analisados: ${encontrados} | Novos no Banco: ${novos}`);
+                        console.log(`[#] Analisados: ${encontrados} | Novos no Banco: ${novos}`);
                     }
                 }
             }
         }
 
-        console.log(`\n✨ Varredura Finalizada!`);
-        console.log(`📊 Total de arquivos .txt encontrados: ${encontrados}`);
-        console.log(`📥 Novos arquivos adicionados à fila: ${novos}`);
+        console.log(`\n[+] Varredura Finalizada!`);
+        console.log(`[#] Total de arquivos .txt encontrados: ${encontrados}`);
+        console.log(`[#] Novos arquivos adicionados à fila: ${novos}`);
 
     } catch (err) {
-        console.error("\n❌ Erro durante a varredura:", err.message);
+        console.error("\n[!] Erro durante a varredura:", err.message);
     } finally {
         await client.disconnect();
         process.exit(0);
