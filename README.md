@@ -1,13 +1,11 @@
-![alt text](./img/lain.png)
-
 <table>
   <tr>
-    <td><img src="./img/lain.png" width="80"></td>
-    <td><h1>Nome do Seu Projeto</h1></td>
+    <td><img src="./img/lain.png" width="600"></td>
+    <td>O Leak Hunter é uma solução modular de engenharia de dados projetada para localizar, indexar e baixar arquivos .txt em larga escala dentro do ecossistema do Telegram. O foco central é a resiliência operacional e a eficiência geográfica, contornando as barreiras de segurança e tráfego da plataforma.</td>
   </tr>
 </table>
 
-O Leak Hunter é uma solução modular de engenharia de dados projetada para localizar, indexar e baixar arquivos .txt em larga escala dentro do ecossistema do Telegram. O foco central é a resiliência operacional e a eficiência geográfica, contornando as barreiras de segurança e tráfego da plataforma.
+
 
 1 - Objetivo do Programa
 O sistema automatiza a "esteira de produção" de dados, transformando grupos privados e canais em fontes de dados estruturadas. Ele busca especificamente por ativos em formato de texto, organiza-os de acordo com a infraestrutura do Telegram e realiza o download de forma inteligente e distribuída.
