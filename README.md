@@ -6,14 +6,13 @@
 </table>
 
 
-
-1 - Objetivo do Programa
+1. Objetivo do Programa:
 O sistema automatiza a "esteira de produção" de dados, transformando grupos privados e canais em fontes de dados estruturadas. Ele busca especificamente por ativos em formato de texto, organiza-os de acordo com a infraestrutura do Telegram e realiza o download de forma inteligente e distribuída.
 
-2 - Arquitetura e Fluxo de Trabalho
+2. Arquitetura e Fluxo de Trabalho:
 A decisão de segregar o software em arquivos específicos não é apenas por organização, mas para garantir a Desacoplagem. Se o Telegram mudar a forma como lista grupos, apenas um script é afetado, mantendo o restante da operação intacta.
 
-Estrutura de Módulos
+3. Estrutura de Módulos:
 Auth.js (A Chave): Gerencia exclusivamente o protocolo de autenticação. Ele gera as sessões que permitem o acesso de múltiplas identidades sem a necessidade de re-login constante.
 
 List-group.js (O Olheiro): Realiza o mapeamento de superfície. Ele identifica todos os grupos e canais aos quais as contas têm acesso, definindo os alvos da operação.
@@ -24,7 +23,7 @@ Downloader.js (O Executor): Responsável pelo I/O pesado. Ele consome a fila do 
 
 Manager.js (O Gerente): Atua na camada de controle (Control Plane). Ele orquestra o rodízio de proxies e sessões, garantindo que a operação nunca pare por limites de um único IP ou conta.
 
-3 - Mapa Mental e Fluxo de Dados
+4. Mapa Mental e Fluxo de Dados:
 
 
 ![alt text](./img/image.png)
@@ -39,7 +38,7 @@ Manager.js (O Gerente): Atua na camada de controle (Control Plane). Ele orquestr
 
 <br>
 
-5 - Resiliência e Solução de Problemas
+5. Resiliência e Solução de Problemas
 O projeto foi construído prevendo que o ambiente de extração é hostil. Abaixo, os principais desafios e como o software os vence:
 
 ⚠️ Problema: Rate Limiting (FloodWait)
@@ -56,5 +55,7 @@ Solução: O Scout.js pré-organiza as mensagens por DC no banco de dados. Isso 
 Múltiplas conexões vindas do mesmo IP residencial são rapidamente bloqueadas.
 
 Solução: Uso de Proxies SOCKS5 dedicados em uma proporção de 1:1 por conta, garantindo que a reputação de uma conta não afete a outra.
+
+<hr>
 
 Objetivo Final: Ter uma ferramenta "set-and-forget", onde você configura as sessões e o sistema cuida de toda a logística de extração, limpeza e download de forma autônoma.
